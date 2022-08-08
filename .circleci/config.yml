@@ -29,14 +29,14 @@ executors:
 jobs:
   build-develop:
     executor: docker-publisher
-  steps:
-    - checkout
-    - setup_remote_docker
-    - python/install-packages:
-        pkg-manager: pip
-    - run:
-        name: Build Docker image
-        command: docker build -t $IMAGE_NAME:latest .
+    steps:
+      - checkout
+      - setup_remote_docker
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .
   
   build-staging: # This is the name of the job, feel free to change it to better match what you're trying to do!
     # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
