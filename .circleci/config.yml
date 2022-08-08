@@ -70,10 +70,8 @@ workflows:
       - build-staging
         filters:
           branches:
-            only:
-              staging
+            only: staging
       - publish-staging-latest
         filters:
           branches:
-            only:
-              staging
+            only: staging
