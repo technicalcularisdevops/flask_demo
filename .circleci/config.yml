@@ -13,6 +13,13 @@ orbs:
   aws-ecr: circleci/aws-ecr@8.1.2
   aws-ecs: circleci/aws-ecs@03.0.0
 
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: docker_flask_demo_app
+    docker:
+      - image: cimg/python:3.10.2
+      
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -22,15 +29,14 @@ jobs:
     # A list of available CircleCI Docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
     # The executor is the environment in which the steps below will be executed - below will use a python 3.10.2 container
     # Change the version below to your required version of python
-    docker:
-      - image: cimg/python:3.10.2
+    #docker:
+    #  - image: cimg/python:3.10.2
     # Checkout the code as the first step. This is a dedicated CircleCI step.
     # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
     # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
-    environment:
-      - IMAGE_NAME: technicalcularisdevops/docker_flask_demo_app
+    executor: docker-publisher
     steps:
       - checkout
       - setup_remote_docker
@@ -46,10 +52,7 @@ jobs:
           name: Build Docker image
           command: docker build -t $IMAGE_NAME:latest .
   publish-staging-latest:
-    environment:
-      - IMAGE_NAME: docker_flask_demo_app
-    docker:
-      - image: cimg/python:3.10.2
+    executor: docker-publisher
     steps:
       - setup_remote_docker
       - run:
@@ -65,3 +68,12 @@ workflows:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-staging
+        filters:
+          branches:
+            only:
+              staging
+      - publish-staging-latest
+        filters:
+          branches:
+            only:
+              staging
