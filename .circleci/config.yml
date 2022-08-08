@@ -112,7 +112,7 @@ workflows:
           filters:
             branches:
               only: staging
-      - deploy-to-aws:
+      - aws-ecr/build-and-push-image:
           requires:
             - publish-staging-latest
   develop:
