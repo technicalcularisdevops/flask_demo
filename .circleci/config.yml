@@ -95,9 +95,9 @@ workflows:
           filters:
             branches:
               only: staging
-develop:
-  jobs:
-    - build-develop:
-      filters:
-        branches:
-          only: develop
+  develop:
+    jobs:
+      - build-develop:
+        filters:
+          branches:
+            only: develop
