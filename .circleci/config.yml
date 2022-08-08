@@ -94,7 +94,7 @@ workflows:
           filters:
             branches:
               only: staging
-      - publish-staging-latest:
+      - publish-staging-latest-to-dockerhub:
           requires:
             - build-staging
           context:
