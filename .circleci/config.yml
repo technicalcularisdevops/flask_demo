@@ -69,7 +69,7 @@ jobs:
           root: .
           paths:
             - ./image.tar
-  publish-staging-latest:
+  publish-staging-latest-to-dockerhub:
     executor: docker-publisher
     steps:
       - attach_workspace:
@@ -94,11 +94,23 @@ workflows:
           filters:
             branches:
               only: staging
-      - publish-staging-latest:
+      - publish-staging-latest-to-dockerhub:
           requires:
             - build-staging
           context:
             - docker_credentials
+          filters:
+            branches:
+              only: staging
+      - aws-ecr/build-and-push-image:
+          registry-id: AWS_ECR_REGISTRY_ID
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: Dockerfile
+          path: .
+          repo: docker_flask_demo
+          tag: 'latest'
           filters:
             branches:
               only: staging
