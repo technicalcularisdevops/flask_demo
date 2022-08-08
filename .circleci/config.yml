@@ -44,7 +44,7 @@ jobs:
       #     command: pytest
       - run:
           name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest
+          command: docker build -t $IMAGE_NAME:latest .
   publish-staging-latest:
     environment:
       - IMAGE_NAME: docker_flask_demo_app
