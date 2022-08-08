@@ -3,7 +3,7 @@
 version: 2.1
 
 parameters:
-  pull-request:
+  pull_request:
     type: boolean
     default: true
 # Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
