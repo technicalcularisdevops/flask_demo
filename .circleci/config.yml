@@ -2,6 +2,10 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+parameters:
+  pull_request:
+    type: boolean
+    default: true
 # Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
@@ -23,6 +27,17 @@ executors:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  build-develop:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .
+  
   build-staging: # This is the name of the job, feel free to change it to better match what you're trying to do!
     # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of the convenience images from CircleCI's Developer Hub
@@ -58,6 +73,8 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
+            echo "$DOCKERHUB_PASS"
+            echo "$DOCKERHUB_USERNAME"
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:latest
 
@@ -66,6 +83,7 @@ jobs:
 workflows:
   staging: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
+    when: << pipeline.parameters.pull_request >>
     jobs:
       - build-staging:
           filters:
@@ -77,3 +95,9 @@ workflows:
           filters:
             branches:
               only: staging
+  develop:
+    jobs:
+      - build-develop:
+        filters:
+          branches:
+            only: develop
