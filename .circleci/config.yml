@@ -72,6 +72,8 @@ workflows:
           branches:
             only: staging
       - publish-staging-latest:
+        requires:
+          - build-staging
         filters:
           branches:
             only: staging
